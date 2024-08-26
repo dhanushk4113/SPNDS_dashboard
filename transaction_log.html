@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Log</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-image: url('posbg.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 0 20px #a66bee;
+    }
+    
+    .header {
+        background-color: #a66bee;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        border-radius: 20px 20px 0 0;
+        margin-bottom: 20px;
+    }
+    
+    .content {
+        padding: 20px;
+    }
+    
+    .transaction-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    
+    .transaction-table th, .transaction-table td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .transaction-table th {
+        background-color: #001f3f;
+        color: white;
+    }
+    
+    /* Navbar Styles */
+    .navbar {
+        background-color: #001f3f;
+        overflow: hidden;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .navbar a {
+        float: left;
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+    }
+
+    .navbar a:hover {
+        background-color: #ddd;
+        color: black;
+    }
+
+    .navbar a.active {
+        background-color: #ff0000;
+        color: white;
+    }
+
+    /* Download button style */
+    .download-btn {
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .download-btn:hover {
+        background-color: #cc0000;
+    }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="index.html">Point of Sale</a>
+    <a class="active" href="transaction_log.html">Transaction Log</a>
+    <a href="manage_items.html">Manage Items</a>
+    <a style="float:right" href="#logout">Logout</a>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>Transaction Log</h1>
+    </div>
+    
+    <div class="content">
+        <div class="date-range">
+            <!-- Selectable date range inputs -->
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date">
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date">
+            <button onclick="fetchTransactionLog()">Apply</button>
+        </div>
+        <table class="transaction-table" id="transactionTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item Name</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody id="transactionBody">
+                <!-- Table body will be populated dynamically with JavaScript -->
+            </tbody>
+        </table>
+        <a href="#" class="download-btn" onclick="downloadCSV()">Download Report</a>
+    </div>
+</div>
+
+<script>
+    // Fetch and display transaction log data
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchTransactionLog();
+    });
+
+    function fetchTransactionLog() {
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+
+        fetch('generate_transaction_log.php?start_date=' + startDate + '&end_date=' + endDate)
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('transactionBody');
+                tbody.innerHTML = ''; // Clear existing table rows
+
+                data.forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${transaction.id}</td>
+                        <td>${transaction.itemName}</td>
+                        <td>₹${transaction.amount}</td>
+                        <td>${transaction.date}</td>
+                        <td>${transaction.time}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching transaction log:', error));
+    }
+
+    // Function to download CSV file
+    function downloadCSV() {
+        const table = document.getElementById('transactionTable');
+        const rows = Array.from(table.querySelectorAll('tr'));
+
+        // Create CSV content
+        const csvContent = rows.map(row => {
+            const columns = row.querySelectorAll('td');
+            return Array.from(columns).map(column => column.textContent).join(',');
+        }).join('\n');
+
+        // Create download link
+        const csvBlob = new Blob([csvContent], { type: 'text/csv' });
+        const blobUrl = URL.createObjectURL(csvBlob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = blobUrl;
+        downloadLink.download = 'transaction_log.csv';
+        downloadLink.click();
+    }
+</script>
+
+</body>
+</html>

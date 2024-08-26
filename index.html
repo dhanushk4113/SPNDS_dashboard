@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Point of Sale</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-image: url('posbg.jpg');
+        background-size: cover;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 0 20px #a66bee;
+    }
+    
+    .header {
+        background-color: #001f3f;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        border-radius: 20px 20px 0 0;
+        margin-bottom: 20px;
+    }
+    
+    .content {
+        padding: 20px;
+        background-color: #add8e6;
+        border-radius: 10px;
+        color: #000000;
+    }
+    
+    .pos-form {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .pos-form label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .pos-form input[type="text"],
+    .pos-form input[type="number"],
+    .pos-form input[type="submit"],
+    .pos-form select {
+        width: auto;
+        margin-bottom: 10px;
+    }
+    
+    .pos-form input[type="submit"] {
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border: #555;
+        border: solid;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    
+    .pos-form input[type="submit"]:hover {
+        background-color: #cc0000;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #001f3f;
+        overflow: hidden;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .navbar a {
+        float: left;
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+    }
+
+    .navbar a:hover {
+        background-color: #ddd;
+        color: black;
+    }
+
+    .navbar a.active {
+        background-color: #ff0000;
+        color: white;
+    }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <a class="active" href="index.html">Point of Sale</a>
+    <a href="transaction_log.html">Transaction Log</a>
+    <a href="manage_items.html">Manage Items</a>
+    <a style="float:right" href="#logout">Logout</a>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>Point of Sale</h1>
+    </div>
+    
+    <div class="content">
+        <form class="pos-form" id="cartForm" onsubmit="return validateForm()" method="post" action="process_cart.php">
+            <label for="food_menu">Select Food:</label>
+            <select id="food_menu" name="food_menu" onchange="addFoodItem()">
+                <option value="">Select Food Item</option>
+                <option value="Burger">Burger</option>
+                <option value="Pizza">Pizza</option>
+                <option value="Salad">Salad</option>
+                <option value="Sandwich">Sandwich</option>
+                <option value="Pasta">Pasta</option>
+                <option value="Steak">Steak</option>
+                <option value="Sushi">Sushi</option>
+                <option value="Soup">Soup</option>
+                <option value="Taco">Taco</option>
+                <option value="Samosa">Samosa</option>
+                <option value="Vada Pav">Vada Pav</option>
+                <option value="Pav Bhaji">Pav Bhaji</option>
+                <option value="Chole Bhature">Chole Bhature</option>
+            </select>
+
+            <div id="selected_items"></div>
+
+            <label for="total">Total Amount:</label>
+            <input type="text" id="total" name="total" readonly>
+            
+            <label for="rfid">RFID Card:</label>
+            <input type="text" id="rfid" name="rfid" placeholder="Scan RFID card" required>
+            
+            <input type="submit" value="Process Transaction">
+        </form>
+    </div>
+</div>
+
+<script>
+    function addFoodItem() {
+        var foodMenu = document.getElementById('food_menu');
+        var selectedItemsDiv = document.getElementById('selected_items');
+        var totalInput = document.getElementById('total');
+        
+        var selectedItem = foodMenu.options[foodMenu.selectedIndex].value;
+        
+        if (selectedItem) {
+            var newDiv = document.createElement('div');
+            newDiv.textContent = selectedItem;
+            selectedItemsDiv.appendChild(newDiv);
+        }
+        
+        var total = 0;
+        var selectedItems = selectedItemsDiv.getElementsByTagName('div');
+        for (var i = 0; i < selectedItems.length; i++) {
+            if (selectedItems[i].textContent === 'Burger') {
+                total += 5;
+            } else if (selectedItems[i].textContent === 'Pizza') {
+                total += 10;
+            } else if (selectedItems[i].textContent === 'Salad') {
+                total += 7;
+            } else if (selectedItems[i].textContent === 'Sandwich') {
+                total += 8;
+            } else if (selectedItems[i].textContent === 'Pasta') {
+                total += 12;
+            } else if (selectedItems[i].textContent === 'Steak') {
+                total += 15;
+            } else if (selectedItems[i].textContent === 'Sushi') {
+                total += 14;
+            } else if (selectedItems[i].textContent === 'Soup') {
+                total += 6;
+            } else if (selectedItems[i].textContent === 'Taco') {
+                total += 9;
+            } else if (selectedItems[i].textContent === 'Samosa') {
+                total += 4;
+            } else if (selectedItems[i].textContent === 'Vada Pav') {
+                total += 5;
+            } else if (selectedItems[i].textContent === 'Pav Bhaji') {
+                total += 6;
+            } else if (selectedItems[i].textContent === 'Chole Bhature') {
+                total += 8;
+            }
+            // Add more conditions for other food items
+        }
+        
+        totalInput.value = '₹' + total;
+    }
+
+    function validateForm() {
+        var rfid = document.getElementById('rfid').value;
+        // Example validation, change according to your requirements
+        if (rfid !== 'validrfid123') {
+            alert('Invalid RFID card!');
+            return false; // Prevent form submission
+        }
+        return true; // Allow form submission
+    }
+</script>
+
+</body>
+</html>

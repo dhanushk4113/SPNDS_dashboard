@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Items</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-image: url('posbg.jpg'); 
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 0 20px #a66bee;
+    }
+    
+    .header {
+        background-color: #a66bee;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        border-radius: 20px 20px 0 0;
+        margin-bottom: 20px;
+    }
+    
+    .content {
+        padding: 20px;
+    }
+    
+    .item-form {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .item-form label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .item-form input[type="text"],
+    .item-form input[type="number"],
+    .item-form input[type="submit"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+    }
+    
+    .item-form input[type="submit"] {
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .item-form input[type="submit"]:hover {
+        background-color: #cc0000;
+    }
+
+    /* Success popup */
+    .success-popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #001f3f; /* Dark blue navbar background color */
+        overflow: hidden;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .navbar a {
+        float: left;
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+    }
+
+    .navbar a:hover {
+        background-color: #ddd; /* Darker blue on hover */
+        color: black;
+    }
+
+    .navbar a.active {
+        background-color: #ff0000; /* Red active link color */
+        color: white;
+    }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="index.html">Point of Sale</a>
+    <a href="transaction_log.html">Transaction Log</a>
+    <a class="active" href="manage_items.html">Manage Items</a>
+    <a style="float:right" href="#logout">Logout</a>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>Manage Items</h1>
+    </div>
+    
+    <div class="content">
+        <!-- Add Item Form -->
+        <form class="item-form" id="addItemForm" onsubmit="return addItem()" method="post">
+            <h2>Add Item</h2>
+            <label for="item_name_add">Name:</label>
+            <input type="text" id="item_name_add" name="item_name_add" placeholder="Enter item name" required>
+            
+            <label for="item_amount_add">Amount:</label>
+            <input type="number" id="item_amount_add" name="item_amount_add" placeholder="Enter item amount" required>
+            
+            <input type="submit" value="Add Item">
+        </form>
+        
+        <!-- Edit Item Form -->
+        <form class="item-form" id="editItemForm" onsubmit="return editItem()" method="post">
+            <h2>Edit Item</h2>
+            <label for="item_id_edit">ID:</label>
+            <input type="text" id="item_id_edit" name="item_id_edit" placeholder="Enter item ID" required>
+            
+            <label for="item_name_edit">Name:</label>
+            <input type="text" id="item_name_edit" name="item_name_edit" placeholder="Enter item name" required>
+            
+            <label for="item_amount_edit">Amount:</label>
+            <input type="number" id="item_amount_edit" name="item_amount_edit" placeholder="Enter item amount" required>
+            
+            <input type="submit" value="Edit Item">
+        </form>
+        
+        <!-- Remove Item Form -->
+        <form class="item-form" id="removeItemForm" onsubmit="return removeItem()" method="post">
+            <h2>Remove Item</h2>
+            <label for="item_id_remove">ID:</label>
+            <input type="text" id="item_id_remove" name="item_id_remove" placeholder="Enter item ID" required>
+            
+            <input type="submit" value="Remove Item">
+        </form>
+    </div>
+</div>
+
+<div class="success-popup" id="successPopup">
+    Action performed successfully!
+</div>
+
+<script>
+    function addItem() {
+        var itemName = document.getElementById('item_name_add').value;
+        var itemAmount = document.getElementById('item_amount_add').value;
+        
+        // Example validation, adjust as needed
+        if (itemName.trim() === '' || isNaN(itemAmount) || parseInt(itemAmount) <= 0) {
+            alert('Please fill in all fields correctly.');
+            return false;
+        }
+        
+        // Example: Send data to server or perform other actions
+        
+        // Show success popup
+        showSuccessPopup();
+        
+        // Prevent form submission
+        return false;
+    }
+    
+    function editItem() {
+        var itemId = document.getElementById('item_id_edit').value;
+        var itemName = document.getElementById('item_name_edit').value;
+        var itemAmount = document.getElementById('item_amount_edit').value;
+        
+        // Example validation, adjust as needed
+        if (itemId.trim() === '' || itemName.trim() === '' || isNaN(itemAmount) || parseInt(itemAmount) <= 0) {
+            alert('Please fill in all fields correctly.');
+            return false;
+        }
+        
+        // Example: Send data to server or perform other actions
+        
+        // Show success popup
+        showSuccessPopup();
+        
+        // Prevent form submission
+        return false;
+    }
+    
+    function removeItem() {
+        var itemId = document.getElementById('item_id_remove').value;
+        
+        // Example validation, adjust as needed
+        if (itemId.trim() === '') {
+            alert('Please fill in all fields correctly.');
+            return false;
+        }
+        
+        // Example: Send data to server or perform other actions
+        
+        // Show success popup
+        showSuccessPopup();
+        
+        // Prevent form submission
+        return false;
+    }
+    
+    function showSuccessPopup() {
+        var successPopup = document.getElementById('successPopup');
+        successPopup.style.display = 'block';
+        
+        // Hide success popup after 2 seconds
+        setTimeout(function() {
+            successPopup.style.display = 'none';
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
